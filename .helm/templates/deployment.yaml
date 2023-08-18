@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cronjobtemplate-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cronjobtemplate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cronjobtemplate
+  template:
+    metadata:
+      labels:
+        app: cronjobtemplate
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: "kubernetes.io/arch"
+                  operator: In
+                  values: ["amd64"]
+      imagePullSecrets:
+      - name: registrysecret
+      containers:
+      - name: app
+        image: {{ .Values.werf.image.app }}
+        ports:
+        - containerPort: 3000
+        env:
+        {{- range $name, $value := .Values.env }}
+        - name: {{ $name }}
+          value: {{ $value | quote }}
+        {{- end }}

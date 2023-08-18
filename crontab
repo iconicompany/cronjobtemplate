@@ -1,0 +1,1 @@
+* * * * * echo "Crontab is working - watchdog 1" >> /tmp/cronjoblog
