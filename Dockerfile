@@ -7,5 +7,7 @@ RUN addgroup -g 1001 -S nodejs
 RUN adduser -S cronjobtemplate -u 1001
 USER cronjobtemplate
 COPY crontab crontab
+COPY *.js .
+COPY dockerstart.sh dockerstart.sh
 
-CMD supercronic ./crontab
+CMD ./dockerstart.sh
